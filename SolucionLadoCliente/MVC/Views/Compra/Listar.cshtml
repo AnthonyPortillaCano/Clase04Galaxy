@@ -1,0 +1,151 @@
+﻿@model Datos.modelos.PaginadorGenerico<Datos.modelos.Compra>
+
+@{
+    ViewData["Title"] = "Listar";
+}
+
+<h1>Listar</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+               Numero Documento
+            </th>
+            <th>
+                Razon Social
+            </th>
+            <th>
+                Total
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Resultado) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumeroDocumento)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RazonSocial)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Total)
+            </td>
+            <td>
+               @* @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })*@
+                <a asp-action="Editar" asp-controller="Compra" asp-route-id="@item.Id">Editar</a>
+                <input type="button" value="Eliminar" class="btn btn-primary" data-id="@item.Id" data-nombre="@item.NumeroDocumento" data-url="@Url.Action("Eliminar","Compra")"/>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+@if (Model.Resultado.Count() > 0)
+{
+    <span>
+        <strong>@Model.TotalRegistros</strong> de
+        <strong>@Model.TotalPagina</strong>
+    </span>
+    <span>&nbsp;|&nbsp;</span>
+    <span>
+        Pagina <strong>@(Model.PaginaActual)</strong> de
+        <strong>@Model.TotalPagina</strong>
+    </span>
+    <span>&nbsp;|&nbsp;</span>
+}
+else
+{
+    <span>No hay resultados para esta busqueda</span>
+}
+
+@if (Model.PaginaActual > 1)
+{
+    @Html.ActionLink("<<", "Listar", new { pagina = 1 }, new { @class = "btn btn-sm btn-default" })
+    <span></span>
+    @Html.ActionLink("Anterior", "Listar", new { pagina = Model.PaginaActual - 1 }, new { @class = "btn btn-sm btn-default" })
+}
+else
+{
+    @Html.ActionLink("<<", "Listar", new { pagina = 1 }, new { @class = "btn btn-sm btn-default disabled" })
+        <span></span>
+    @Html.ActionLink("Anterior", "Listar", new { pagina = 1 }, new { @class = "btn btn-sm btn-default disabled" })
+}
+<span></span>
+@if (Model.PaginaActual < Model.TotalPagina)
+{
+    @Html.ActionLink("Siguiente", "Listar", new { pagina = Model.PaginaActual + 1 }, new { @class = "btn btn-sm btn-default" })
+    <span></span>
+    @Html.ActionLink(">>", "Listar", new { pagina = Model.TotalPagina }, new { @class = "btn btn-sm btn-default" })
+}
+else
+{
+    @Html.ActionLink("Siguiente", "Listar", new { pagina = Model.TotalPagina - 1 }, new { @class = "btn btn-sm btn-default disabled" })
+    <span></span>
+    @Html.ActionLink(">>", "Listar", new { pagina = Model.TotalPagina }, new { @class = "btn btn-sm btn-default disabled" })
+}
+
+@await Component.InvokeAsync("Persona")
+@section Scripts
+{
+    <script>
+        $(":input").click(function () {
+            var url = $(this).data("url");
+            var id = $(this).data("id");
+            var nombre = $(this).data("nombre");
+            var urlRetornar = "@Url.Action("Listar","Compra")";
+            var formData = new FormData();
+            formData.append('id', id);
+            bootbox.confirm({
+                message: "Desea eliminar la compra " + nombre + "?",
+                buttons: {
+                    confirm: {
+                        label: 'Si',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: url,
+                            data: formData,
+                            method: 'POST',
+                            processData: false,
+                            contentType: false,
+                            success: function (data) {
+                                if (data) {
+                                    window.location.replace(urlRetornar);
+                                }
+                            },
+                            complete: function (data) {
+
+                            }
+                        })
+                    }
+                }
+
+            })
+        })
+
+    </script>
+
+
+
+}

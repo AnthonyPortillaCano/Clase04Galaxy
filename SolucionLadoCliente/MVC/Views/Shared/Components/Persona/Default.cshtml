@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Datos.dto.PersonaDto>
+
+@{
+    ViewData["Title"] = "Default";
+}
+
+<h1>Persona View Component</h1>
+
+<p>
+    <a asp-action="Index" asp-controller="Personas">Listar Persona</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.NombreCompleto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Edad)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NombreCompleto)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Edad)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
