@@ -58,7 +58,7 @@ namespace Datos.Repositories
             await connection.OpenAsync();
             var parameters = new DynamicParameters();
             parameters.Add("IdCompra", idCompra);
-            var resultado = await connection.QueryAsync<DetalleCompra>("sp_DetalleCompra", parameters, commandType: CommandType.StoredProcedure);
+            var resultado = await connection.QueryAsync<DetalleComprasDto>("sp_DetalleCompra", parameters, commandType: CommandType.StoredProcedure);
             List<DetalleComprasDto> listDetalleCompra = resultado.Cast<DetalleComprasDto>().ToList();
             await connection.CloseAsync();
             return listDetalleCompra;

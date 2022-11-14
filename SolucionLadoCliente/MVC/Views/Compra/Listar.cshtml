@@ -7,7 +7,8 @@
 <h1>Listar</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="GuardarEditar" asp-controller="Compra">Crear Nueva Compra</a>
+    <a asp-action="DescargarPdf" asp-controller="Compra">Descargar pdf</a>
 </p>
 <table class="table">
     <thead>
@@ -46,7 +47,7 @@
                @* @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })*@
-                <a asp-action="Editar" asp-controller="Compra" asp-route-id="@item.Id">Editar</a>
+                <a asp-action="GuardarEditar" asp-controller="Compra" asp-route-id="@item.Id">Editar</a>
                 <input type="button" value="Eliminar" class="btn btn-primary" data-id="@item.Id" data-nombre="@item.NumeroDocumento" data-url="@Url.Action("Eliminar","Compra")"/>
             </td>
         </tr>

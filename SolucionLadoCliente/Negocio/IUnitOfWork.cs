@@ -12,6 +12,7 @@ namespace Negocio
         IDetalleCompraNegocio detalleCompraNegocio { get; }
         IPersonaNegocio personaNegocio { get;  }
 
+        IOrdenesPagoNegocio ordenesPagoNegocio { get;}
         Task<int> CommitAsync();
     }
 }

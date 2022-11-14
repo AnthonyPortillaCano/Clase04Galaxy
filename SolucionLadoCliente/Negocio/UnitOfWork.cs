@@ -13,10 +13,13 @@ namespace Negocio
             compraNegocio = new CompraNegocio(_context, _connectionString);
             detalleCompraNegocio = new DetalleCompraNegocio(_context, connectionString);
             personaNegocio = new PersonaNegocio(connectionString);
+            ordenesPagoNegocio=new OrdenesPagoNegocio(connectionString);
         }
         public ICompraNegocio compraNegocio { get; private set; }
         public IDetalleCompraNegocio detalleCompraNegocio { get; private set; }
         public IPersonaNegocio personaNegocio { get; private set; }
+
+        public IOrdenesPagoNegocio ordenesPagoNegocio { get; private set; }
         public async Task<int> CommitAsync()
         {
             return await _context.SaveChangesAsync();

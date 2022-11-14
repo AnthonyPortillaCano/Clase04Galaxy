@@ -1,0 +1,243 @@
+﻿@model List<Datos.dto.DetalleComprasDto>
+
+@{
+    ViewData["Title"] = "GuardarEditar";
+}
+
+<h1>Detalle compra</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="GuardarEditar">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                 <label>Codigo Compra</label>
+                 <label id="lblId">@Model[0].Id</label>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model[0].NumeroDocumento" class="control-label"></label>
+                <input asp-for="@Model[0].NumeroDocumento" class="form-control" id="txtnumerodocumento" />
+                <span asp-validation-for="@Model[0].NumeroDocumento" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model[0].RazonSocial" class="control-label"></label>
+                <input asp-for="@Model[0].RazonSocial" class="form-control"  id="txtrazonsocial"/>
+                <span asp-validation-for="@Model[0].RazonSocial" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model[0].Producto" class="control-label"></label>
+                <input asp-for="@Model[0].Producto" class="form-control" id="txtproducto" />
+                <span asp-validation-for="@Model[0].Producto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model[0].Precio" class="control-label"></label>
+                <input asp-for="@Model[0].Precio" class="form-control" id="txtprecio" onKeypress="if (event.keyCode < 45 || event.keyCode > 57) event.returnValue = false;" />
+                <span asp-validation-for="@Model[0].Precio" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model[0].Cantidad" class="control-label"></label>
+                <input asp-for="@Model[0].Cantidad" class="form-control" id="txtcantidad" onKeypress="if (event.keyCode < 45 || event.keyCode > 57) event.returnValue = false;" />
+                <span asp-validation-for="@Model[0].Cantidad" class="text-danger"></span>
+            </div>
+        </form>
+        @if ((bool)ViewBag.Editar == false)
+        {
+            <button class="btn btn-success btn-sm" id="btnAgregar">Agregar</button>
+        }
+        <button  class="btn btn-primary btn-sm" id="btnTerminar">Terminar Compra</button>
+    </div>
+</div>
+ @if((bool)ViewBag.Editar)
+{
+    <table class="table table-bordered table-sm" id="tbProducto">
+         <thead class="table-dark">
+             <tr>
+                <th>
+                    Id
+                </th>
+                <th>
+                    Producto
+                </th>
+                <th>
+                    Precio
+                </th>
+                <th>
+                    Cantidad
+                </th>
+                <th>
+                    Total
+                </th>
+                <th></th>
+             </tr>
+
+         </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrdenSecuencia)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Producto)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Precio)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Cantidad)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Total)
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+    <label>Total:</label>
+    <label id="lblTotalValue">@Model[0].TotalCompra</label>
+}
+else
+{
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table table-bordered table-sm" id="tbProducto">
+                <thead>
+                    <tr class="table-dark">
+                        <th>Orden Secuencia</th>
+                        <th>Producto</th>
+                        <th>Precio</th>
+                        <th>Cantidad</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <label>Total:</label>
+
+    <label id="lblTotalValue"></label>
+}
+<div>
+    <a asp-action="Listar" asp-controller="Compra">Retornar a la pagina principal</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        var totalCompra=0;
+        var max=0;
+       var sourceArray=@Json.Serialize(Model);
+      
+        $("#btnAgregar").click(function()
+        {
+         
+            var total= parseFloat($("#txtprecio").val()) * parseFloat($("#txtcantidad").val());
+            max=max+1;
+            totalCompra=totalCompra +Number(total.toFixed(2));
+            $("#lblTotalValue").html(totalCompra);
+             if($("#txtproducto").val()!=="" && $("#txtprecio").val()!="" && $("#txtcantidad").val()!=="")
+             {
+                 $("#tbProducto tbody").append(
+
+                       $("<tr>").append(
+                           $("<td>").text(max.toString()),
+                           $("<td>").text($("#txtproducto").val()),
+                           $("<td>").text($("#txtprecio").val()),
+                            $("<td>").text($("#txtcantidad").val()),
+                           $("<td>").text(Number(total.toFixed(2)))
+                       )
+                 )
+             }
+             else
+             {
+                alert("Los campos precio producto y cantidad son obligatorios");
+             }
+
+             $("#txtproducto").val("");
+             $("#txtprecio").val("");
+             $("#txtcantidad").val("");
+        });
+        $("#btnTerminar").on("click",function(){
+
+            if (sourceArray[0].numeroDocumento != null) {
+                if ($("#txtnumerodocumento").val() != "" && $("#txtrazonsocial").val() != "") {
+                     var compraVM={
+                         Id: $("#lblId").html(),
+                         NumeroDocumento: $("#txtnumerodocumento").val(),
+                        RazonSocial: $("#txtrazonsocial").val(),
+                        Total: parseFloat($("#lblTotalValue").html())
+                     }
+                    var urlRetornar = "@Url.Action("Listar","Compra")";
+                     $.ajax({
+                         url: '@Url.Action("Editar","Compra")',
+                         method: "POST",
+                        data: JSON.stringify(compraVM),
+                        datatype: "json",
+                        contentType: "application/json; charset=utf-8",
+                        success:function(data)
+                        {
+                              if(data)
+                              {
+                                  alert("Compra editada");
+                                  window.location.replace(urlRetornar);
+                                //  location.reload();
+                              }
+                        }
+                     })
+
+                 }
+                 else
+                 {
+                     alert("Debe ingresar el numero de documento y razon social");
+                 }
+            }
+            else{
+                var oDetalle_Compra = [];
+                var total = 0;
+                $("#tbProducto > tbody > tr").each(function (i, tr) {
+                    oDetalle_Compra.push({
+                        OrdenSecuencia: $(tr).find('td:eq(0)').text(),
+                        Producto: $(tr).find('td:eq(1)').text(),
+                        Precio: $(tr).find('td:eq(2)').text(),
+                        Cantidad: $(tr).find('td:eq(3)').text(),
+                        Total: $(tr).find('td:eq(4)').text()
+                    })
+                    total = total + parseFloat($(tr).find('td:eq(4)').text());
+                })
+                if ($("#txtnumerodocumento").val() != "" && $("#txtrazonsocial").val() != "" && oDetalle_Compra.length > 0) {
+                    var oCompraVM = {
+                        NumeroDocumento: $("#txtnumerodocumento").val(),
+                        RazonSocial: $("#txtrazonsocial").val(),
+                        Total: total,
+                        DetalleCompras: oDetalle_Compra
+                    }
+                    var urlRetornar = "@Url.Action("Listar","Compra")";
+                    $.ajax({
+                        url: '@Url.Action("Guardar","Compra")',
+                        method: "POST",
+                        data: JSON.stringify(oCompraVM),
+                        datatype: "json",
+                        contentType: "application/json; charset=utf8",
+                        success: function (data) {
+                            if (data) {
+                                alert("Compra Registrada");
+                                window.location.replace(urlRetornar);
+                             //   localtion.reload();
+                            }
+                        }
+                    })
+                }
+                else {
+                    alert("Debe ingresar el numero de documento,el detalle y razon social");
+                }
+            }
+          
+        })
+
+    </script>
+}

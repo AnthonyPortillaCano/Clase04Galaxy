@@ -1,6 +1,7 @@
 using Datos.modelos;
 using Microsoft.EntityFrameworkCore;
 using Negocio;
+using Rotativa.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var provider = builder.Services.BuildServiceProvider();
@@ -18,7 +19,8 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+IWebHostEnvironment env = app.Environment;
+RotativaConfiguration.Setup(env.WebRootPath, ".\\Rotativa");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
